@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZHULDYZ — склад</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f6f7;--surf:#fff;--ink:#14272b;--mute:#5d7075;--line:#dbe4e6;--acc:#0b6e6e;--acc-ink:#fff;--warn-bg:#fdeaea;--warn:#b3261e;--mid-bg:#fff3d9;--mid:#8a5a00;--ok-bg:#e3f4ec;--ok:#1b6b45;color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a1c;--surf:#162427;--ink:#e6f0f1;--mute:#93aaae;--line:#2a3d41;--acc:#4fc3c0;--acc-ink:#062022;--warn-bg:#3a1c1c;--warn:#ff9c94;--mid-bg:#3a2e12;--mid:#f2c36b;--ok-bg:#16352a;--ok:#7fd7a8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a1c;--surf:#162427;--ink:#e6f0f1;--mute:#93aaae;--line:#2a3d41;--acc:#4fc3c0;--acc-ink:#062022;--warn-bg:#3a1c1c;--warn:#ff9c94;--mid-bg:#3a2e12;--mid:#f2c36b;--ok-bg:#16352a;--ok:#7fd7a8;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--surf);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.2px}
+header span{color:var(--mute);font-size:13px}
+.demo{margin-left:auto;background:var(--mid-bg);color:var(--mid);padding:4px 10px;border-radius:99px;font-size:12px}
+nav{display:flex;gap:4px;padding:10px 16px 0;overflow-x:auto;background:var(--surf);border-bottom:1px solid var(--line)}
+nav button{border:0;background:none;color:var(--mute);padding:10px 14px;font:inherit;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--acc);border-color:var(--acc)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+h2{font-size:20px;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 16px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+input[type=number]{width:90px}
+.btn{background:var(--acc);color:var(--acc-ink);border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+.btn.ghost{background:none;color:var(--acc);border:1px solid var(--line)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;color:var(--mute);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.t0{background:var(--warn-bg);color:var(--warn)}.t1{background:var(--mid-bg);color:var(--mid)}.t2{background:var(--ok-bg);color:var(--ok)}
+.line{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.line select{flex:1;min-width:180px}
+.hist{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.hist b{font-weight:600}.hist small{color:var(--mute)}
+.task{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.task input{width:20px;height:20px;accent-color:var(--acc)}
+.task.done span{text-decoration:line-through;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat b{display:block;font-size:26px}.stat span{color:var(--mute);font-size:13px}
+.empty{color:var(--mute);padding:14px 0}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%;text-align:center}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header><h1>ZHULDYZ · склад</h1><span>София и Кристина</span><span class="demo">Черновой макет с тестовыми данными</span></header>
+<nav id="nav" role="tablist"></nav>
+<main id="main"></main>
+<div id="toast" role="status"></div>
+<script>
+const today=new Date().toISOString().slice(0,10);
+let items=[
+{id:1,name:'Перчатки нитриловые M',unit:'уп',safe:10},{id:2,name:'Маски медицинские',unit:'уп',safe:8},
+{id:3,name:'Слюноотсосы',unit:'уп',safe:5},{id:4,name:'Композит A2',unit:'шт',safe:3},
+{id:5,name:'Адгезив',unit:'шт',safe:2},{id:6,name:'Анестетик артикаин',unit:'уп',safe:4},
+{id:7,name:'Иглы карпульные',unit:'уп',safe:3},{id:8,name:'Салфетки нагрудные',unit:'уп',safe:6}];
+const PK={1:10,2:50,3:100,4:4,5:5,6:50,7:100,8:500};items.forEach(i=>i.pack=PK[i.id]||1);
+let cabs=['Каб. 201А','Каб. 201Б','Каб. 202','Каб. 203','Каб. 303'];
+let receipts=[{id:1,date:'2026-11-02',supplier:'МедДент',inv:'№ 118',comment:'Доставка в пятницу',lines:[[1,20,3500],[2,15,1200],[3,6,900],[4,5,9500],[5,4,12000],[6,10,14000],[7,8,4500],[8,12,1100]]}];
+let issues=[
+{id:1,date:'2026-11-09',cab:'Каб. 201А',lines:[[1,6],[2,4],[3,3],[4,2],[5,2]]},
+{id:2,date:'2026-11-09',cab:'Каб. 203',lines:[[1,5],[3,3],[5,2],[7,4],[6,4]]},
+{id:3,date:'2026-11-16',cab:'Каб. 303',lines:[[1,4],[2,5],[4,1],[7,2],[8,5]]}];
+[...receipts,...issues].forEach(d=>d.lines.forEach(l=>{const p=items.find(i=>i.id==l[0]).pack;l[1]*=p;if(l[2])l[2]/=p}));
+let notes={},sent='',ed=null,delk='';
+let tasks=[{id:1,title:'Принять накладную от МедДент',done:true,date:'2026-11-02'},{id:2,title:'Выдать материалы кабинетам',done:true,date:'2026-11-16'},{id:3,title:'Отправить заявку Кристине',done:false,date:today},{id:4,title:'Проверить остатки анестетика',done:false,date:today}];
+let tab='Задачи',q='',rf='',rt='',nid=100;
+const tabs=['Задачи','Номенклатура','Приход','Выдача','Заявка','Отчёт'];
+const $=s=>document.querySelector(s);
+const nm=id=>items.find(i=>i.id==id)?.name||'';
+const un=id=>items.find(i=>i.id==id)?.unit||'';
+const sum=(arr,id)=>arr.reduce((a,d)=>a+d.lines.filter(l=>l[0]==id).reduce((b,l)=>b+l[1],0),0);
+const stock=id=>sum(receipts,id)-sum(issues,id);
+const fd=d=>d.split('-').reverse().join('.');
+const money=n=>n.toLocaleString('ru-RU')+' ₸';
+const fmt=(i,n)=>{if(!i||i.pack<=1)return n+' шт';const p=Math.floor(n/i.pack),r=Math.round(n-p*i.pack);return p+' уп'+(r?' + '+r+' шт':'')};
+const rsum=r=>Math.round(r.lines.reduce((a,l)=>a+l[1]*(l[2]||0),0));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2600)}
+function opts(){return items.map(i=>`<option value="${i.id}">${esc(i.name)} (${i.unit})</option>`).join('')}
+function nav(){$('#nav').innerHTML=tabs.map(t=>`<button role="tab" aria-selected="${t==tab}" onclick="tab='${t}';ed=null;draw()">${t}${t=='Заявка'?` (${items.filter(i=>stock(i.id)<=0).length})`:''}</button>`).join('')}
+function tag(i){const s=stock(i.id);return s<=0?'<span class="tag t0">В заявке</span>':s<=i.safe*i.pack?'<span class="tag t1">Ниже несгораемого</span>':'<span class="tag t2">В норме</span>'}
+const V={
+Номенклатура(){const f=items.filter(i=>i.name.toLowerCase().includes(q.toLowerCase()));
+return `<h2>Номенклатура</h2><p class="sub">Все позиции и их остатки. Остаток считается сам: приход минус выдача.</p>
+<div class="card"><div class="row"><label style="flex:1;min-width:200px">Поиск<input id="q" value="${esc(q)}" placeholder="Начните вводить название" oninput="q=this.value;keep('q')"></label></div></div>
+<div class="card tw"><table><tr><th>Название</th><th>Ед.</th><th class="n">Шт в упак.</th><th class="n">Несгораемый (в ед.)</th><th class="n">Остаток</th><th>Статус</th></tr>
+${f.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.pack>1?'уп':'шт'}</td><td class="n"><input type="number" min="1" value="${i.pack}" onchange="items.find(x=>x.id==${i.id}).pack=Math.max(1,+this.value||1);draw()" aria-label="Штук в упаковке"></td><td class="n"><input type="number" min="0" value="${i.safe}" onchange="items.find(x=>x.id==${i.id}).safe=+this.value;draw()" aria-label="Несгораемый остаток"></td><td class="n"><b>${fmt(i,stock(i.id))}</b></td><td>${tag(i)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">Ничего не найдено</td></tr>'}</table></div>
+`},
+Приход(){const f=receipts.filter(r=>(!rf||r.date>=rf)&&(!rt||r.date<=rt)).sort((a,b)=>b.date.localeCompare(a.date));
+return `<h2>Приход</h2><p class="sub">Создайте накладную — остатки обновятся сами.</p>
+<div class="card"><div class="row"><label>Дата<input type="date" id="rd" value="${today}"></label><label>Поставщик<input id="rs" placeholder="Например, МедДент"></label><label>№ накладной<input id="ri" style="width:120px"></label><label style="flex:1;min-width:200px">Комментарий<input id="rc" placeholder="Необязательно"></label></div>
+<div id="rl" style="margin-top:12px"></div><div class="row"><button class="btn ghost" onclick="addLine('rl')">Добавить позицию</button><button class="btn" onclick="saveDoc('r')">${ed&&ed.k=='r'?'Сохранить изменения':'Сохранить накладную'}</button>${ed&&ed.k=='r'?'<button class="btn ghost" onclick="ed=null;draw()">Отмена</button>':''}</div></div>
+<div class="card"><b>История прихода</b><div class="row" style="margin:10px 0"><label>С<input type="date" value="${rf}" onchange="rf=this.value;draw()"></label><label>По<input type="date" value="${rt}" onchange="rt=this.value;draw()"></label><button class="btn ghost" onclick="rf=rt='';draw()">Сбросить период</button></div>
+${f.map(r=>`<div class="hist"><b>${fd(r.date)} · ${esc(r.supplier)}</b>${r.edited?' <small>· изменено '+fd(r.edited)+'</small>':''} <small>${esc(r.inv||'')}</small> · <b>${money(rsum(r))}</b>${r.comment?'<br><i>Комментарий: '+esc(r.comment)+'</i>':''}<br><small>${r.lines.map(l=>nm(l[0])+' — '+fmt(items.find(i=>i.id==l[0]),l[1])).join('; ')}</small>${acts('r',r.id)}</div>`).join('')||'<div class="empty">За этот период приходов нет</div>'}</div>`},
+Выдача(){const f=[...issues].sort((a,b)=>b.date.localeCompare(a.date));
+return `<h2>Выдача</h2><p class="sub">Раз в неделю: выберите кабинет, добавьте позиции — остаток спишется сам.</p>
+<div class="card"><div class="row"><label>Дата<input type="date" id="id" value="${today}"></label><label>Кабинет<select id="ic">${cabs.map(c=>`<option>${c}</option>`).join('')}</select></label></div>
+<div id="il" style="margin-top:12px"></div><div class="row"><button class="btn ghost" onclick="addLine('il')">Добавить позицию</button><button class="btn" onclick="saveDoc('i')">${ed&&ed.k=='i'?'Сохранить изменения':'Записать выдачу'}</button>${ed&&ed.k=='i'?'<button class="btn ghost" onclick="ed=null;draw()">Отмена</button>':''}</div></div>
+<div class="card"><b>История выдач</b><div style="margin-top:10px">${f.map(r=>`<div class="hist"><b>${fd(r.date)} · ${r.cab}</b>${r.edited?' <small>· изменено '+fd(r.edited)+'</small>':''}<br><small>${r.lines.map(l=>nm(l[0])+' — '+fmt(items.find(i=>i.id==l[0]),l[1])).join('; ')}</small>${acts('i',r.id)}</div>`).join('')}</div></div>`},
+Заявка(){const f=items.filter(i=>stock(i.id)<=0);
+return `<h2>Заявка для Кристины</h2><p class="sub">Сюда сами попадают позиции с остатком 0. София пишет комментарий, Кристина вписывает количество.</p>
+<div class="card tw">${f.length?`<table><tr><th>Позиция</th><th>Остаток</th><th>Комментарий Софии</th><th>К заказу (Кристина)</th></tr>
+${f.map(i=>{const n=notes[i.id]||{};return `<tr><td>${esc(i.name)}</td><td><span class="tag t0">0</span></td><td><input value="${esc(n.c||'')}" placeholder="Например, нужно 5 уп" style="width:100%;min-width:180px" onchange="(notes[${i.id}]=notes[${i.id}]||{}).c=this.value"></td><td><input type="number" min="0" value="${n.q??''}" onchange="(notes[${i.id}]=notes[${i.id}]||{}).q=this.value"></td></tr>`}).join('')}</table>
+<div style="margin-top:14px"><button class="btn" onclick="sent=today;toast('Заявка отправлена Кристине');draw()">Отправить Кристине</button><p class="sub" style="margin:10px 0 0">${sent?'<b>Отправлено '+fd(sent)+'.</b> ':''}Кристина увидит эту заявку здесь, на вкладке «Заявка», когда войдёт под своим логином, и получит уведомление на почту zhuldyzpharm@gmail.com. Количество к заказу она впишет прямо в этой таблице.</p></div>`:'<div class="empty">Все позиции в наличии — заявка пуста</div>'}</div>`},
+Задачи(){const t=tasks.filter(x=>x.date==today),o=tasks.filter(x=>x.date!=today&&x.done);
+const row=x=>`<div class="task ${x.done?'done':''}"><input type="checkbox" ${x.done?'checked':''} onchange="toggle(${x.id})" aria-label="Выполнено"><span>${esc(x.title)}</span></div>`;
+return `<h2>Задачи на сегодня</h2><p class="sub">Отмеченные задачи сохраняются и попадают в отчёт Еркежан.</p>
+<div class="card"><div class="row"><label style="flex:1;min-width:200px">Новая задача<input id="tt" placeholder="Что нужно сделать"></label><button class="btn" onclick="addTask()">Добавить задачу</button></div></div>
+<div class="card">${t.map(row).join('')||'<div class="empty">На сегодня задач нет</div>'}</div>
+<div class="card"><b>Выполнено ранее</b>${o.map(x=>`<div class="task done"><span>${fd(x.date)} · ${esc(x.title)}</span></div>`).join('')||'<div class="empty">Пока ничего</div>'}</div>`},
+Отчёт(){const mo=today.slice(0,7),rm=receipts.filter(r=>r.date.startsWith(mo)),spent=rm.reduce((a,r)=>a+rsum(r),0),dn=tasks.filter(x=>x.done),top=items.map(i=>[i.name,sum(issues,i.id)/i.pack,i.pack>1?'уп':'шт']).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]).slice(0,5);
+return `<h2>Отчёт для Еркежан</h2><p class="sub">В последний день месяца письмо уходит само на 1923en@gmail.com. Вот как оно будет выглядеть.</p>
+<div class="grid"><div class="stat"><b>${money(spent)}</b><span>потрачено на закуп за месяц</span></div><div class="stat"><b>${dn.length}</b><span>задач выполнено</span></div><div class="stat"><b>${issues.length}</b><span>выдач кабинетам</span></div><div class="stat"><b>${receipts.length}</b><span>накладных принято</span></div><div class="stat"><b>${items.filter(i=>stock(i.id)<=0).length}</b><span>позиций в заявке</span></div></div>
+<div class="card"><b>Закуп за месяц по накладным</b>${rm.map(r=>`<div class="task"><span>${fd(r.date)} · ${esc(r.supplier)} ${esc(r.inv||'')} — <b>${money(rsum(r))}</b></span></div>`).join('')||'<div class="empty">В этом месяце накладных нет</div>'}</div>
+<div class="card"><b>Что сделано за месяц</b>${dn.map(x=>`<div class="task done"><span style="text-decoration:none;color:var(--ink)">${fd(x.date)} · ${esc(x.title)}</span></div>`).join('')||'<div class="empty">Нет выполненных задач</div>'}</div>
+<div class="card"><b>Чаще всего выдавали</b>${top.map(x=>`<div class="task"><span>${esc(x[0])} — ${+x[1].toFixed(1)} ${x[2]}</span></div>`).join('')}</div>
+<button class="btn" onclick="toast('Это макет: в рабочей версии письмо уйдёт на 1923en@gmail.com')">Показать, как уйдёт письмо</button>`}};
+function keep(id){const e=$('#'+id),p=e.selectionStart;draw();const n=$('#'+id);n.focus();n.setSelectionRange(p,p)}
+function draw(){nav();$('#main').innerHTML=V[tab]();if(tab=='Приход')addLine('rl');if(tab=='Выдача')addLine('il');fillEdit()}
+function addLine(id){const d=document.createElement('div');d.className='line';d.innerHTML=`<select>${opts()}</select><input type="number" min="1" value="1" aria-label="Количество"><select aria-label="Упаковка или штучно" style="flex:0 0 auto;min-width:0"><option value="p">упаковка</option><option value="s">штучно</option></select>${id=='rl'?'<input type="number" min="0" placeholder="Цена за выбранную ед., ₸" aria-label="Цена за единицу" style="width:150px">':''}`;$('#'+id).appendChild(d)}
+function lines(id){return [...$('#'+id).children].map(d=>{const id=+d.children[0].value,k=d.children[2].value=='p'?items.find(i=>i.id==id).pack:1;return [id,+d.children[1].value*k,+(d.children[3]?.value||0)/k]}).filter(l=>l[1]>0)}
+function saveDocOld(k){const ls=lines(k=='r'?'rl':'il');if(!ls.length)return toast('Добавьте хотя бы одну позицию');
+if(k=='r'){const s=$('#rs').value.trim();if(!s)return toast('Укажите поставщика');receipts.push({id:++nid,date:$('#rd').value,supplier:s,inv:$('#ri').value,comment:$('#rc').value.trim(),lines:ls});toast('Накладная сохранена, остатки обновлены')}
+else{for(const l of ls){if(stock(l[0])<l[1])return toast('Недостаточно на складе: '+nm(l[0]))}issues.push({id:++nid,date:$('#id').value,cab:$('#ic').value,lines:ls});toast('Выдача записана, остатки списаны')}
+draw()}
+function addItem(){const n=$('#nn').value.trim();if(!n)return toast('Введите название');if(items.some(i=>i.name==n))return toast('Такая позиция уже есть');items.push({id:++nid,name:n,unit:$('#nu').value||'шт',safe:+$('#ns').value,pack:+$('#np').value||1});toast('Позиция добавлена');draw()}
+function addCab(){const b=document.createElement('div');b.className='hist';b.innerHTML=`<div class="row" style="margin-bottom:10px"><label>Кабинет<select>${cabs.map(c=>`<option>${c}</option>`).join('')}</select></label><button class="btn ghost" onclick="this.closest('.hist').remove()">Убрать кабинет</button></div><div class="bl"></div><button class="btn ghost" onclick="addLine(this.previousElementSibling)">Добавить позицию</button>`;$('#ib').appendChild(b);addLine(b.querySelector('.bl'))}
+function saveIssue(){const bs=[...$('#ib').children].map(b=>({cab:b.querySelector('select').value,lines:lines(b.querySelector('.bl'))})).filter(b=>b.lines.length);if(!bs.length)return toast('Добавьте хотя бы одну позицию');const need={};bs.forEach(b=>b.lines.forEach(l=>need[l[0]]=(need[l[0]]||0)+l[1]));for(const k in need){if(stock(+k)<need[k])return toast('Недостаточно на складе: '+nm(k))}bs.forEach(b=>issues.push({id:++nid,date:$('#id').value,cab:b.cab,lines:b.lines}));toast('Выдача записана: кабинетов '+bs.length);draw()}
+const acts=(k,id)=>`<div class="row" style="margin-top:8px">`+(delk==k+id?`<span style="align-self:center;color:var(--warn)">Удалить запись?</span><button class="btn" style="background:var(--warn);color:var(--bg)" onclick="doDel('${k}',${id})">Да, удалить</button><button class="btn ghost" onclick="delk='';draw()">Нет</button>`:`<button class="btn ghost" onclick="editDoc('${k}',${id})">Изменить</button><button class="btn ghost" onclick="delk='${k}${id}';draw()">Удалить</button>`)+`</div>`;
+function editDoc(k,id){ed={k,id};delk='';tab=k=='r'?'Приход':'Выдача';draw();window.scrollTo(0,0)}
+function fillEdit(){if(!ed)return;const p=ed.k,d=(p=='r'?receipts:issues).find(x=>x.id==ed.id);if(!d||(p=='r')!=(tab=='Приход'))return;const box=$('#'+(p=='r'?'rl':'il'));box.innerHTML='';
+if(p=='r'){$('#rd').value=d.date;$('#rs').value=d.supplier;$('#ri').value=d.inv||'';$('#rc').value=d.comment||''}else{$('#id').value=d.date;$('#ic').value=d.cab}
+d.lines.forEach(l=>{addLine(box.id);const r=box.lastChild,it=items.find(i=>i.id==l[0]);let q=l[1],u='s';if(it.pack>1&&q%it.pack==0){q=q/it.pack;u='p'}r.children[0].value=l[0];r.children[1].value=q;r.children[2].value=u;if(p=='r'&&r.children[3]&&l[2])r.children[3].value=+(l[2]*(u=='p'?it.pack:1)).toFixed(2)});
+box.parentElement.insertAdjacentHTML('afterbegin',`<div class="tag t1" style="margin-bottom:10px">Редактирование записи от ${fd(d.date)}</div>`)}
+function saveDoc(k){const ls=lines(k=='r'?'rl':'il');if(!ls.length)return toast('Добавьте хотя бы одну позицию');const E=ed&&ed.k==k?ed:null,a=k=='r'?receipts:issues,i=E?a.findIndex(x=>x.id==E.id):-1,old=a[i];let o;
+if(k=='r'){const s=$('#rs').value.trim();if(!s)return toast('Укажите поставщика');o={id:E?E.id:++nid,date:$('#rd').value,supplier:s,inv:$('#ri').value,comment:$('#rc').value.trim(),lines:ls}}else o={id:E?E.id:++nid,date:$('#id').value,cab:$('#ic').value,lines:ls};
+if(E){o.edited=today;a[i]=o;const bad=items.find(it=>stock(it.id)<0);if(bad){a[i]=old;return toast('Нельзя: остаток «'+bad.name+'» станет отрицательным')}ed=null;toast(k=='r'?'Накладная изменена, остатки пересчитаны':'Выдача изменена, остатки пересчитаны')}
+else{if(k=='i'){for(const l of ls){if(stock(l[0])<l[1])return toast('Недостаточно на складе: '+nm(l[0]))}}a.push(o);toast(k=='r'?'Накладная сохранена, остатки обновлены':'Выдача записана, остатки списаны')}
+draw()}
+function doDel(k,id){const a=k=='r'?receipts:issues,i=a.findIndex(x=>x.id==id),old=a[i];a.splice(i,1);const bad=k=='r'?items.find(it=>stock(it.id)<0):null;delk='';if(bad){a.splice(i,0,old);draw();return toast('Нельзя удалить: по позиции «'+bad.name+'» уже были выдачи')}if(ed&&ed.id==id)ed=null;toast('Запись удалена, остатки пересчитаны');draw()}
+function addTask(){const t=$('#tt').value.trim();if(!t)return;tasks.push({id:++nid,title:t,done:false,date:today});draw()}
+function toggle(id){const t=tasks.find(x=>x.id==id);t.done=!t.done;draw()}
+draw();
+</script>
+</body>
+</html>
